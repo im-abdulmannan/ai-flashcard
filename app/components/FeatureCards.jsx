@@ -1,15 +1,8 @@
-import {
-    Box,
-    Container,
-    Grid,
-    Paper,
-    Typography
-} from "@mui/material";
+import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: "#fff",
-  ...theme.typography.body2,
+  backgroundColor: "#9fa1ad",
   padding: theme.spacing(2),
   textAlign: "justify",
   color: theme.palette.text.secondary,
@@ -19,7 +12,7 @@ const Item = styled(Paper)(({ theme }) => ({
 const FeatureCards = () => {
   return (
     <Container>
-      <Box sx={{ my: 6, mx: 5 }}>
+      <Box sx={{ my: 10, mx: 5 }}>
         <Typography
           variant="h2"
           marginBottom={5}

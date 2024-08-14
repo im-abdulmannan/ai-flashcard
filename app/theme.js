@@ -12,9 +12,9 @@ const theme = createTheme({
   palette: {
     mode: "light",
     text: {
-      primary: "#5b5d6e",
+      primary: "#1A1110",
       secondary: "#2c2c2c",
-    }
+    },
   },
   typography: {
     fontFamily: poppins.style.fontFamily,
@@ -45,7 +45,6 @@ const theme = createTheme({
       styleOverrides: () => ({
         body: {
           backgroundColor: "#f2f3f3",
-          color: "#5b5d6e",
         },
         "::-webkit-scroll-behavior": {
           scrollbarBehavior: "smooth",
@@ -65,6 +64,13 @@ const theme = createTheme({
           backgroundColor: "#e7e7ec",
         },
       }),
+    },
+    MuiButton: {
+      defaultProps: {
+        variant: "filled",
+        size: "medium",
+        disableElevation: true,
+      },
     },
   },
 });
