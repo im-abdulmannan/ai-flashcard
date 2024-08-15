@@ -1,3 +1,4 @@
+import getStripe from "@/utils/get-stripe";
 import { Check } from "@mui/icons-material";
 import {
   Box,
@@ -15,6 +16,31 @@ import {
 } from "@mui/material";
 
 const PricingCard = () => {
+  const handleSubmit = async() => {
+    const checkout_session = await fetch("/api/checkout_sessions", {
+      method: "POST",
+      headers: {
+        origin: "https://localhost:3000"
+      },
+    })
+
+    const checkoutSessionJson = await checkout_session.json();
+
+    if(checkoutSessionJson.statusCode === 500) {
+      console.error(checkout_session.message)
+      return;
+    }
+
+    const stripe = await getStripe()
+    const {error} = await stripe.redirectToCheckout({
+      sessionId: checkoutSessionJson.id,
+    })
+
+    if(error) {
+      console.error("Error:", error.message)
+      return;
+    }
+  }
   return (
     <Container>
       <Box sx={{ my: 6, mx: 5 }}>
@@ -133,7 +159,7 @@ const PricingCard = () => {
                   color="text.secondary"
                   marginBottom={4}
                 >
-                  $10/month
+                  $15/month
                 </Typography>
                 <List>
                   <ListItem disablePadding>
@@ -183,6 +209,7 @@ const PricingCard = () => {
                     border: "1px solid #565656",
                     color: "#2c2c2c",
                   }}
+                  onClick={handleSubmit}
                 >
                   Subscribe
                 </Button>
