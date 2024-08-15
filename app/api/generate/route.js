@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { NextResponse } from "next/server";
 
 const systemPrompt = `
 You're a flashcard Creator. Your task is to generate concise and effective flashcards based on the given topic or content. Follow these guidelines:
@@ -14,6 +14,7 @@ You're a flashcard Creator. Your task is to generate concise and effective flash
 8. Tailor the difficulty level of the flashcards to the user's specified preferences.
 9. If given a body of text, extract the most important and relevant information for the flashcards.
 10. Aim to create a balanced set of flashcards that covers the topic comprehensively.
+11. Generate only 10 Flashcards.
 
 Remember, the goal is to facilitate effective learning and retention of information through these flashcards.
 
@@ -29,7 +30,7 @@ Return in the following JSON Format
 `;
 
 export async function POST(req) {
-  const genAI = new GoogleGenerativeAI();
+  const genAI = new GoogleGenerativeAI(process.env.API_KEY);
   const data = await req.text();
 
   const completion = await genAI
@@ -39,7 +40,17 @@ export async function POST(req) {
     })
     .generateContent(data);
 
-  const flashcards = JSON.parse(completion.content);
+  const responseText = completion.response.candidates[0].content.parts[0].text;
 
-  return NextResponse.json(flashcards.flashcards);
+  const cleanText = responseText.replace(/```json\n/g, "").replace(/```/g, "");
+  try {
+    const flashcards = JSON.parse(cleanText);
+    return NextResponse.json(flashcards.flashcards);
+  } catch (error) {
+    console.error("Invalid JSON:", error);
+    return NextResponse.json(
+      { error: { message: "Invalid JSON" } },
+      { status: 400 }
+    );
+  }
 }

@@ -56,8 +56,9 @@ export default function Home() {
                   color: "#fafafa",
                 },
               }}
+              onClick={() => router.push("/generate")}
             >
-              Free Trial
+              Get Started
             </Button>
             <Link href="#pricing">
               <Button
