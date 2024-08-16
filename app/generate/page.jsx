@@ -19,7 +19,6 @@ import Appbar from "../components/Appbar";
 import FlipCard from "../components/FlipCard";
 import Footer from "../components/Footer";
 import Loader from "../components/Loader";
-import theme from "../theme";
 
 export default function Generate() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -30,8 +29,10 @@ export default function Generate() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoaded && !user) {
-      router.push("/sign-in");
+    if (isLoaded) {
+      if (!user) {
+        router.push("/sign-in");
+      }
     }
   }, [isLoaded, router, user]);
 
@@ -41,18 +42,14 @@ export default function Generate() {
       method: "POST",
       body: text,
     })
-      .then((res) => res.json())
-      .then((data) => {
-        setFlashcards(data);
-        setLoadings(false);
+    .then((res) => res.json())
+    .then((data) => {
+      setFlashcards(data);
+      setLoadings(false);
       });
   };
 
   const saveFlashcards = async () => {
-    if (!user) {
-      alert("Please sign in to save your flashcards.");
-      return;
-    }
     if (!name) {
       alert("Please enter a name for your flashcards.");
       return;
@@ -141,7 +138,7 @@ export default function Generate() {
           )}
 
           {flashcards.length > 0 && (
-            <Box sx={{ mt: 4 }}>
+            <Box sx={{ mt: 4, width: "100%" }}>
               <Typography variant="h3" component="h2" gutterBottom>
                 Flashcards
               </Typography>
@@ -160,28 +157,17 @@ export default function Generate() {
                   Save
                 </Button>
               </Box>
-              <Paper
-                sx={{
-                  mt: 10,
-                  px: 2,
-                  py: 4,
-                  boxShadow: `1px 1px 3px ${theme.palette.tangaroa[300]}`,
-                  backgroundColor: theme.palette.tangaroa[100],
-                }}
-                align="center"
+              <Grid
+                container
+                rowSpacing={1}
+                columnSpacing={{ xs: 1, sm: 2, md: 3 }}
               >
-                <Grid
-                  container
-                  rowSpacing={1}
-                  columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-                >
-                  {flashcards.map((flashcard, index) => (
-                    <Grid item xs={12} sm={6} md={6} lg={6} key={index}>
-                      <FlipCard flashcard={flashcard} index={index} />
-                    </Grid>
-                  ))}
-                </Grid>
-              </Paper>
+                {flashcards.map((flashcard, index) => (
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <FlipCard flashcard={flashcard} index={index} />
+                  </Grid>
+                ))}
+              </Grid>
             </Box>
           )}
         </Box>

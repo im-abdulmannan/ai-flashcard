@@ -10,7 +10,7 @@ import {
   Container,
   Grid,
   Paper,
-  Typography
+  Typography,
 } from "@mui/material";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import Link from "next/link";
@@ -24,6 +24,14 @@ const Page = () => {
   const router = useRouter();
   const { isLoaded, isSignedIn, user } = useUser();
   const [flashcards, setFlashcards] = useState([]);
+
+  useEffect(() => {
+    if (isLoaded) {
+      if (!user) {
+        router.push("/sign-in");
+      }
+    }
+  }, [isLoaded, router, user]);
 
   useEffect(() => {
     async function getFlashcards() {
@@ -61,12 +69,17 @@ const Page = () => {
             }}
           >
             <Typography variant="p" component="div">
-              You don&apos;t have any flashcards yet. To create one, go to the{" "}
-              <Link href="/generate">Create Flashcard</Link> page.
+              You don&apos;t have any flashcards yet. <br /> To create one, go
+              to the <Link href="/generate">Create Flashcard</Link> page.
             </Typography>
           </Paper>
         ) : (
-          <Grid container columnSpacing={2} rowSpacing={1} sx={{ mt: 4, minHeight: "12rem" }}>
+          <Grid
+            container
+            columnSpacing={2}
+            rowSpacing={1}
+            sx={{ mt: 4, minHeight: "12rem" }}
+          >
             {flashcards.map((flashcard, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card>
@@ -83,6 +96,9 @@ const Page = () => {
           </Grid>
         )}
       </Container>
+      <br />
+      <br />
+      <br />
       <Footer />
     </Box>
   );

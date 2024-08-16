@@ -5,7 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import { collection, doc, getDocs } from "firebase/firestore";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Appbar from "../components/Appbar";
 import FlipCard from "../components/FlipCard";
@@ -13,11 +13,20 @@ import Footer from "../components/Footer";
 import Loader from "../components/Loader";
 
 export default function Flashcard() {
+  const router = useRouter();
   const { isLoaded, isSignedIn, user } = useUser();
   const [flashcards, setFlashcards] = useState([]);
 
   const searchParams = useSearchParams();
   const search = searchParams.get("id");
+
+  useEffect(() => {
+    if (isLoaded) {
+      if (!user) {
+        router.push("/sign-in");
+      }
+    }
+  }, [isLoaded, router, user]);
 
   useEffect(() => {
     async function getFlashcard() {
