@@ -11,16 +11,6 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// const firebaseConfig = {
-//   apiKey: "AIzaSyCiER1zfEKdcaiVZnS7GId2ipX7q289VFg",
-//   authDomain: "ai-flashcard-26598.firebaseapp.com",
-//   projectId: "ai-flashcard-26598",
-//   storageBucket: "ai-flashcard-26598.appspot.com",
-//   messagingSenderId: "729966878716",
-//   appId: "1:729966878716:web:d320d75f9dfefdf1cf9c79",
-//   measurementId: "G-B69H48KMDX"
-// };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 

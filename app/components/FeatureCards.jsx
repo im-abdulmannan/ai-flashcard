@@ -2,11 +2,12 @@ import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: "#9fa1ad",
-  padding: theme.spacing(2),
+  padding: theme.spacing(4),
+  borderRadius: 10,
+  backgroundColor: theme.palette.tangaroa[200],
+  boxShadow: theme.shadows[5],
   textAlign: "justify",
-  color: theme.palette.text.secondary,
-  minHeight: "256px",
+  minHeight: "250px",
 }));
 
 const FeatureCards = () => {
@@ -15,7 +16,8 @@ const FeatureCards = () => {
       <Box sx={{ my: 10, mx: 5 }}>
         <Typography
           variant="h2"
-          marginBottom={5}
+          color="text.primary"
+          gutterBottom
           justifyContent={"center"}
           display={"flex"}
         >
@@ -24,7 +26,7 @@ const FeatureCards = () => {
         <Grid container spacing={3}>
           <Grid item xs>
             <Item>
-              <Typography variant="h4" textAlign={"center"} marginY={3}>
+              <Typography variant="h4" textAlign={"center"} gutterBottom>
                 Easy to use
               </Typography>
               <Typography variant="p">
@@ -36,7 +38,7 @@ const FeatureCards = () => {
           </Grid>
           <Grid item xs>
             <Item>
-              <Typography variant="h4" textAlign={"center"} marginY={3}>
+              <Typography variant="h4" textAlign={"center"} gutterBottom>
                 Powerful Search
               </Typography>
               <Typography variant="p">
@@ -48,7 +50,7 @@ const FeatureCards = () => {
           </Grid>
           <Grid item xs>
             <Item>
-              <Typography variant="h4" textAlign={"center"} marginY={3}>
+              <Typography variant="h4" textAlign={"center"} gutterBottom>
                 Customizable Learning
               </Typography>
               <Typography variant="p">

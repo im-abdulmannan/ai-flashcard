@@ -2,16 +2,19 @@
 
 import { db } from "@/firebase.config";
 import { useUser } from "@clerk/nextjs";
-import { Container, Grid } from "@mui/material";
+import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import { collection, doc, getDocs } from "firebase/firestore";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import Appbar from "../components/Appbar";
 import FlipCard from "../components/FlipCard";
+import Footer from "../components/Footer";
+import Loader from "../components/Loader";
 
 export default function Flashcard() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [flashcards, setFlashcards] = useState([]);
-  const [flipped, setFlipped] = useState({});
 
   const searchParams = useSearchParams();
   const search = searchParams.get("id");
@@ -31,15 +34,40 @@ export default function Flashcard() {
     getFlashcard();
   }, [search, user]);
 
+  if (!isLoaded && !isSignedIn) return <Loader />;
+
   return (
-    <Container>
-      <Grid container spacing={3} my={4}>
-        {flashcards.map((flashcard, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <FlipCard flashcard={flashcard} index={index} />
-          </Grid>
-        ))}
-      </Grid>
-    </Container>
+    <Box>
+      <Appbar />
+      <Container maxWidth="md">
+      <Typography variant="h2" sx={{ my: 4 }}>
+          {search}
+        </Typography>
+      {flashcards.length === 0 && (
+        <Paper
+          sx={{
+            p: 4,
+            align: "center",
+            backgroundColor: (theme) => theme.palette.tangaroa[200],
+          }}
+        >
+          <Typography variant="p" component="div">
+            You don&apos;t have any flashcards of {search}. <br /> To create
+            one, go to the <Link href="/generate">Create Flashcard</Link> page.{" "}
+            <br /> To view the flashcards, go to the{" "}
+            <Link href="/flashcards">My Flashcards</Link> page.
+          </Typography>
+        </Paper>
+      )}
+        <Grid container spacing={3} my={4}>
+          {flashcards.map((flashcard, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <FlipCard flashcard={flashcard} index={index} />
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+      <Footer />
+    </Box>
   );
 }

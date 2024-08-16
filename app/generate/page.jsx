@@ -4,6 +4,7 @@ import { useUser } from "@clerk/nextjs";
 import {
   Box,
   Button,
+  CircularProgress,
   Container,
   Grid,
   Paper,
@@ -12,10 +13,13 @@ import {
 } from "@mui/material";
 import { collection, doc, getDoc, writeBatch } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { db } from "../../firebase.config";
 import Appbar from "../components/Appbar";
 import FlipCard from "../components/FlipCard";
+import Footer from "../components/Footer";
+import Loader from "../components/Loader";
+import theme from "../theme";
 
 export default function Generate() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -24,6 +28,12 @@ export default function Generate() {
   const [flashcards, setFlashcards] = useState([]);
   const [loadings, setLoadings] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoaded && !user) {
+      router.push("/sign-in");
+    }
+  }, [isLoaded, router, user]);
 
   const handleSubmit = async () => {
     setLoadings(true);
@@ -75,10 +85,12 @@ export default function Generate() {
     router.push("/flashcards");
   };
 
+  if (!isLoaded && !isSignedIn) return <Loader></Loader>;
+
   return (
     <Box>
       <Appbar />
-      <Container>
+      <Container maxWidth="md">
         <Box
           sx={{
             mt: 4,
@@ -88,8 +100,16 @@ export default function Generate() {
             alignItems: "center",
           }}
         >
-          <Typography variant="h4">Generate Flashcards</Typography>
-          <Paper sx={{ p: 4, width: "100%" }}>
+          <Typography variant="h3" gutterBottom>
+            Generate Flashcards
+          </Typography>
+          <Paper
+            sx={{
+              p: 4,
+              width: "100%",
+              backgroundColor: (theme) => theme.palette.tangaroa[100],
+            }}
+          >
             <TextField
               value={text}
               onChange={(e) => setText(e.target.value)}
@@ -112,38 +132,61 @@ export default function Generate() {
           </Paper>
 
           {loadings && (
-            <Typography variant="h6" component="h2" gutterBottom>
-              Generating flashcards...
-            </Typography>
+            <Box marginTop={4} align="center">
+              <Typography variant="h6" component="h2" gutterBottom>
+                Generating flashcards...
+              </Typography>
+              <CircularProgress align="center" sx={{ color: "text.primary" }} />
+            </Box>
           )}
 
           {flashcards.length > 0 && (
             <Box sx={{ mt: 4 }}>
-              <Typography variant="h5" component="h2" gutterBottom>
-                Generated Flashcards
+              <Typography variant="h3" component="h2" gutterBottom>
+                Flashcards
               </Typography>
-              <TextField
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                label="Enter Name"
-                rows={4}
-                variant="outlined"
-                sx={{ mb: 2 }}
-              />
-              <Button variant="contained" onClick={saveFlashcards}>
-                Save
-              </Button>
-              <Grid container spacing={2}>
-                {flashcards.map((flashcard, index) => (
-                  <Grid item xs={12} sm={6} md={4} key={index}>
-                    <FlipCard flashcard={flashcard} index={index} />
-                  </Grid>
-                ))}
-              </Grid>
+              <Box marginY={4} display={"flex"}>
+                <TextField
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  label="Enter Name"
+                  variant="outlined"
+                />
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={saveFlashcards}
+                >
+                  Save
+                </Button>
+              </Box>
+              <Paper
+                sx={{
+                  mt: 10,
+                  px: 2,
+                  py: 4,
+                  boxShadow: `1px 1px 3px ${theme.palette.tangaroa[300]}`,
+                  backgroundColor: theme.palette.tangaroa[100],
+                }}
+                align="center"
+              >
+                <Grid
+                  container
+                  rowSpacing={1}
+                  columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                >
+                  {flashcards.map((flashcard, index) => (
+                    <Grid item xs={12} sm={6} md={6} lg={6} key={index}>
+                      <FlipCard flashcard={flashcard} index={index} />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Paper>
             </Box>
           )}
         </Box>
       </Container>
+      <Footer />
     </Box>
   );
 }
